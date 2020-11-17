@@ -1,0 +1,12 @@
+{
+    "themes": [
+        {
+            "name" : "spms",
+            "types": [ "login" ]
+        },
+        {
+            "name" : "aegean",
+            "types": [ "login" ]
+        }
+    ]
+}

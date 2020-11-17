@@ -1,0 +1,5 @@
+gr.uagean.authenticators.SpmsEsmoAuthenticatorFactory
+gr.uagean.authenticators.SpmsPostResponseAuthenticatorFactory
+gr.uagean.authenticators.SpmsEidasAuthenticatorFactory
+gr.uagean.authenticators.AnonymizeEsmoAuthenticatorFactory
+gr.uagean.authenticators.TestEsmoAuthenticatorFactory

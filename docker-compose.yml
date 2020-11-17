@@ -1,0 +1,72 @@
+version: '3'
+
+volumes:
+  postgres_data:
+      driver: local
+
+services:
+  postgres:
+      image: postgres:9.6
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      environment:
+        POSTGRES_DB: keycloak
+        POSTGRES_USER: keycloak
+        POSTGRES_PASSWORD: passcloak
+  keycloak:
+      image: djart/esmocloak:0.0.43
+      environment:
+        #PROXY_ADDRESS_FORWARDING: 'true'
+        JAVA_OPTS: "-Xms64m -Xmx256m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m -Djava.net.preferIPv4Stack=true"
+        DB_VENDOR: POSTGRES
+        DB_ADDR: postgres
+        DB_DATABASE: keycloak
+        DB_USER: keycloak
+        DB_PASSWORD: passcloak
+        KEYCLOAK_USER: admin
+        KEYCLOAK_PASSWORD: adminpass
+        KEYSTORE_PATH: /resources/testKeys/keystore.jks
+        KEY_PASS: selfsignedpass
+        STORE_PASS: keystorepass
+        JWT_CERT_ALIAS: selfsigned
+        HTTPSIG_CERT_ALIAS: 1
+        SIGNING_SECRET: QjG+wP1CbAH2z4PWlWIDkxP4oRlgK2vos5/jXFfeBw8=
+        ASYNC_SIGNATURE: 'true'
+        EXPIRES: 5
+        CONFIG_JSON: /resources/configurationResponse.json
+        #IDP_URL: http://dss.aegean.gr:8093
+        #IDP_URL: https://dss.aegean.gr:8443
+        #IDP_URI: /login
+        IDP_URL: https://esmo-gateway.eu
+        IDP_URI: /eid/login
+        #ACM_URL: http://5.79.83.118:8070
+        #ACM_URL: http://dss1.aegean.gr:8070
+        ACM_URL: https://dss1.aegean.gr:8073
+        #SESSION_MANAGER_URL: http://5.79.83.118:8090
+        SESSION_MANAGER_URL: http://dss1.aegean.gr:8090
+        CONFIGURATION_MANAGER_URL: http://5.79.83.118:8080
+        EIDAS_PROPERTIES: eduPersonUniqueId,eduPersonAffiliation,eduPersonPrimaryAffiliation,schacExpiryDate,mobile,eduPersonPrincipalName,PrioreduPersonPrincipalNamePrior,displayName,sn,eduOrgPostalAddress,eduOrgCn,schacHomeOrganization,edueduOrgLegalNameOrgCn,eduOrgL,edueduOrgLegalNameOrgCn
+        ESMO_SUPPORTED_SIG_ALGORITHMS: RSA
+        ESMO_SUPPORTED_ENC_ALGORITHMS: RSA
+        DEFAULT_FINGERPRINT: 7a9ba747ab5ac50e640a07d90611ce612b7bde775457f2e57b804517a87c813b
+        ESMO_SP_REQUEST_ISSUER: SPms001
+        ESMO_SP_REQUEST_RECIPIENT: ACMms001
+        ESMO_SP_REQUEST_RECEIVER: ACMms001
+        ESMO_SP_REQUEST_SENDER: SPms001
+        ESMO_SP_METADATA: https://aegean.gr/esmo/gw/sp/metadata
+        ESMO_SP_NAME: SPms001
+        ESMO_SP_LOCATION: Greece
+        ESMO_SP_PROTOCOL: OIDC
+        ESMO_EXPOSE_URL: /sp/response
+        ESMO_SP_OIDC_AUTH_ENDPOINT: http://localhost:8180/auth/realms/esmo/protocol/openid-connect/auth
+        EIDAS_SP_OIDC_AUTH_ENDPOINT: http://localhost:8180/auth/realms/eidas/protocol/openid-connect/auth
+        ESMONO_SP_OIDC_AUTH_ENDPOINT: http://localhost:8180/auth/realms/esmoNo/protocol/openid-connect/auth
+        ESMONOPROD_SP_OIDC_AUTH_ENDPOINT: http://localhost:8180/auth/realms/esmoNoProd/protocol/openid-connect/auth
+        ESMO_NO_REALM: esmoNo
+        ESMO_NO_PROD_REALM: esmoNoProd
+      volumes:
+        - ./resources:/resources
+      ports:
+        - 8180:8080
+      depends_on:
+        - postgres
